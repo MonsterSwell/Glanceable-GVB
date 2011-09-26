@@ -4,7 +4,7 @@ from .base import *
 # Configure these however you like for local development.
 # Don't forget to configure a database!
 
-# DEBUG=True
+DEBUG=True
 # TEMPLATE_DEBUG=DEBUG
 
 # DATABASES = {
