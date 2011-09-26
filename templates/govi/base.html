@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>{% block title %}Glanceable GVB Amsterdam{% endblock %}</title>
+
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+	
+	<script src="{{ STATIC_URL }}js/jquery-1.6.4.min.js"></script>
+
+    {% block extra-head %}{% endblock %}
+</head>
+<body>
+
+<div id="container">
+	<header>
+
+	</header>
+	<div id="main" role="main">
+        {% block content %}
+            
+        {% endblock %}
+	</div>
+	<footer>
+	    <a href="/pick">pick stops</a> — <a href="http://monsterswell.com">Monster Swell</a>
+	</footer>
+</div> <!--! end of #container -->
+
+</body>
+</html>

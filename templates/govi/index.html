@@ -1,0 +1,57 @@
+{% extends "govi/base.html" %}
+
+{% block extra-head %}
+    <script type="text/javascript" charset="utf-8">
+        var halteids = [];
+        
+        {% for halteid in halteids %}
+            halteids.push("{{ halteid }}");
+        {% endfor %}
+        
+        var haltes = [];
+        
+        function refresh() {
+            // TODO rewrite using backbone
+            haltes = [];
+            
+            for (var halteIdIndex in halteids) {
+                var halteid = halteids[halteIdIndex];
+                $.getJSON('/halte/' + halteid + '/', function (data) {
+                    haltes.push((data));
+                    haltes.sort(function(a, b) { 
+                        if (a['minutes'][0] < b['minutes'][0]) return -1;
+                        if (a['minutes'][0] == b['minutes'][0]) return 0;
+                        if (a['minutes'][0] > b['minutes'][0]) return 1;
+                    });
+                    
+                    render();
+                });
+            }
+        }
+        
+        function render() {
+            $('#display').empty();
+            
+            for (var halteIndex in haltes) {
+                var halte = haltes[halteIndex];
+                
+                $('#display').append('<h2>' + halte['destination'] + ' ' + halte['minutes'].join(' ') + '</h2>');
+            }
+        }
+        
+        $(document).ready(function() {
+            refresh();
+            setInterval("refresh();", 45000);
+        });
+    </script>
+{% endblock %}
+
+
+{% block content %}
+    
+    <div id="display">
+        
+    </div>
+    
+    
+{% endblock %}

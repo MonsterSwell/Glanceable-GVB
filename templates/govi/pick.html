@@ -1,0 +1,60 @@
+{% extends "govi/base.html" %}
+
+{% block title %}Halte picker{% endblock %}
+
+{% block extra-head %}
+    <!-- <link rel="stylesheet" href="{{ STATIC_URL }}js/chosen/chosen.css">
+    <script src="{{ STATIC_URL }}js/chosen/chosen.jquery.min.js"></script> -->
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            // for (var halteIndex in haltes) {
+            //                 var halte = haltes[halteIndex];
+            //                 
+            //                 $('#haltestring').append('<option value="' + halte['id'] + '">' + halte['name'] + '</option>');
+            //             }
+            //             
+            //             $('#haltestring').chosen();
+            
+            $('#filterbutton').click(function() {
+                $('.halte').each(function() {
+                    var val = $('#filter').val().toLowerCase();
+
+                    if ($("A", this).text().toLowerCase().indexOf(val) == -1) {
+                        $(this).toggle(false);
+                    } else {
+                        $(this).toggle(true);
+                    }
+                });
+            });
+            
+            $('.haltecheck').click(function() {
+                // Get all checked boxes
+                var ids = [];
+                $('.haltecheck:checked').each(function(index) {
+                    ids.push($(this).attr('id'));
+                });
+                
+                $('#displaylink').attr('href', '/?halteids=' + ids.join(','));
+            });
+        });
+    </script>
+{% endblock %}
+
+
+{% block content %}
+    <label for="filter">Filter</label>
+    <input name="filter" id="filter">
+    <input type="button" id="filterbutton" value="Filter">
+    
+    <p><a id="displaylink" href="/?halteids=">Go to your glanceable display.</a></p>
+
+    <ol style="list-style-type: none;">
+    {% for halte in haltes %}
+        <li class="halte"><input type="checkbox" class="haltecheck" id="{{ halte.id }}" name="radio_{{ halte.id }}"><a href="http://cache.govi.openov.nl/kv55/{{ halte.id }}">{{ halte.name }}</a></li>
+    {% endfor %}
+    </ol>
+
+    <!-- <select id="haltestring" class="chzn-select">
+    </select> -->
+{% endblock %}
