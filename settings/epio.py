@@ -12,17 +12,17 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '{host}:{port}'.format(
-                host=config['redis']['host'],
-                port=config['redis']['port']),
-        'OPTIONS': {
-            'PASSWORD': config['redis']['password'],
-        },
-        'VERSION': config['core']['version'],
-    },
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'redis_cache.RedisCache',
+#         'LOCATION': '{host}:{port}'.format(
+#                 host=config['redis']['host'],
+#                 port=config['redis']['port']),
+#         'OPTIONS': {
+#             'PASSWORD': config['redis']['password'],
+#         },
+#         'VERSION': config['core']['version'],
+#     },
+# }
 MEDIA_ROOT = config['core']['data_directory']
 
