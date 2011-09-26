@@ -1,6 +1,22 @@
 {% extends "govi/base.html" %}
 
 {% block extra-head %}
+    <style type="text/css" media="screen">  
+    
+        BODY {
+            font-size: 36px;
+            font-family: monospace;
+        }
+        
+        #state {
+            margin-bottom: 4em;
+        }
+        .destination {
+            padding-right: 1em;
+            text-align: right;
+        }
+    </style>
+
     <script type="text/javascript" charset="utf-8">
         var halteids = [];
         
@@ -30,12 +46,12 @@
         }
         
         function render() {
-            $('#display').empty();
+            $('#state').empty();
             
             for (var halteIndex in haltes) {
                 var halte = haltes[halteIndex];
                 
-                $('#display').append('<h2>' + halte['destination'] + ' ' + halte['minutes'].join(' ') + '</h2>');
+                $('#state').append('<tr><td class="destination">' + halte['destination'] + '</td><td class="minutes">' + halte['minutes'].join(' ') + '</td></tr>');
             }
         }
         
@@ -50,7 +66,7 @@
 {% block content %}
     
     <div id="display">
-        
+        <table id="state"></table>
     </div>
     
     
