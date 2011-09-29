@@ -18,11 +18,14 @@ HALTES = sorted(HALTES, key=lambda halte: halte['name'])
 
 
 def index(request):
-    halteids = request.GET.get('halteids', '').split(',')
+    halteids = request.GET.get('halteids', '')
     
-    return render_to_response('govi/index.html', {
-        'halteids': halteids
-    }, context_instance=RequestContext(request))
+    if halteids:
+        return render_to_response('govi/index.html', {
+            'halteids': halteids.split(',')
+        }, context_instance=RequestContext(request))
+    else:
+        return HttpResponseRedirect('/pick/')
     
 def pick(request):
     return render_to_response('govi/pick.html', {
