@@ -16,6 +16,6 @@ for mark in marks:
     
     lat, lon = coordinates.split(',')
     
-    output.append({'name': name, 'id': kvid, 'lat': lat, 'lon': lon})
+    output.append({'name': name, 'id': kvid, 'lat': float(lat), 'lon': float(lon)})
     
 open('kml.json', 'w').write(json.dumps(output, indent=2))

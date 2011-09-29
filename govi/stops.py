@@ -1,4 +1,4 @@
-[
+HALTES = [
   {
     "lat": 4.89891084495292, 
     "lon": 52.596347676281098, 
@@ -26574,3 +26574,33 @@
     "id": "54660270"
   }
 ]
+
+
+import math
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    R = 6371000.0 # Radius in meters
+    
+    lat1 = lat1 * math.pi / 180.0
+    lon1 = lon1 * math.pi / 180.0
+    
+    lat2 = lat2 * math.pi / 180.0
+    lon2 = lon2 * math.pi / 180.0
+    
+    dLat = (lat2 - lat1)
+    dLon = (lon2 - lon1)
+    
+    a = math.pow(math.sin(dLat/2), 2) + math.cos(lat1) * math.cos(lat2) * math.pow(math.sin(dLon/2), 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    
+    return R * c
+
+
+if __name__ == '__main__':
+    lat = 4.8754323801209702
+    lon = 52.378625579268501
+
+
+
+    for halte in HALTES:
+        print halte['name'], haversine_distance(lat, lon, halte['lat'], halte['lon'])

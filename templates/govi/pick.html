@@ -1,11 +1,80 @@
 {% extends "govi/base.html" %}
+{% load verbatim %}
 
 {% block title %}Halte picker{% endblock %}
 
 {% block extra-head %}
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/underscore.js"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/backbone.js"></script>
+    
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/icanhaz.js"></script>
+    
+    
+    {% verbatim %}
+    <script type="text/html" id="stop">
+    <li class="halte">
+        <input type="checkbox" class="haltecheck" id="{{ id }}" name="radio_{{ id }}">
+        <a href="http://cache.govi.openov.nl/kv55/{{ id }}">{{ name }}</a>
+    </li>
+    </script>
+    {% endverbatim %}
+    
+
     <script type="text/javascript" charset="utf-8">
+        var Stop = Backbone.Model.extend({
+            distance: function(position) {
+                R = 6371000.0 // Radius in meters
+                
+                // TODO for some strange reason, these are the other way around
+                var lat1 = position.coords.longitude * Math.PI / 180.0;
+                var lon1 = position.coords.latitude * Math.PI / 180.0;
+                
+                // console.log('lat1', lat1);
+                // console.log('lon1', lon1);
+                
+                var lat2 = this.get('lat') * Math.PI / 180.0;
+                var lon2 = this.get('lon') * Math.PI / 180.0;
+                
+                var dLat = lat2 - lat1;
+                var dLon = lon2 - lon1;
+                
+                // console.log('dlat', dLat, 'dLon', dLon);
+                
+                // Haversine distance
+                var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon/2)*Math.sin(dLon/2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                
+                // console.log('a', a, 'c', c);
+                
+                // Distance in meters
+                return R * c;
+                
+                // Equirectangular approximation: http://www.movable-type.co.uk/scripts/latlong.html
+                // var x = (tLon - lon) * Math.cos((lat + tLat) / 2);
+                //                 var y = (tLat - lat);
+                //                 return Math.sqrt(x*x + y*y);
+                
+                // City block distance
+                //return Math.abs(this.get('lat')-lat) + Math.abs(this.get('lon')-lon);
+                
+                // return Math.sqrt(Math.pow((this.get('lat')-lat), 2) + Math.pow((this.get('lon'))-lon, 2));
+            }
+        });
+        
+        var StopSet = Backbone.Collection.extend({
+            model: Stop,
+        });
+        
+        var Amsterdam = new StopSet;
+        Amsterdam.reset({{ haltesjson|safe }});
+    
+        // TODO implement Backbone views at some point
+        // var StopList = Backbone.View.extend({
+        //     
+        // });
+    
         $(document).ready(function() {
-            $('.haltecheck').click(function() {
+            $('.haltecheck').live('click', function() {
                 // Get all checked boxes
                 var ids = [];
                 $('.haltecheck:checked').each(function(index) {
@@ -14,6 +83,31 @@
                 
                 $('#displaylink').attr('href', '/?halteids=' + ids.join(','));
             });
+            
+            Amsterdam.each(function(stop, index, list) {
+                $('#haltes').append(ich.stop(stop.toJSON()));
+            });
+            
+            function orderOnPosition(pos) {
+                // console.log(pos.coords.latitude, pos.coords.longitude);
+                
+                // TODO rewrite based on view code
+                Amsterdam.reset(Amsterdam.sortBy(function(stop) {
+                    return stop.distance(pos);
+                }));
+                
+                $('#haltes').empty();
+                
+                // TODO ideally calculate meters from you
+                Amsterdam.each(function(stop, index, list) {
+                    // console.log(stop.get('name'), stop.distance(pos));
+                    $('#haltes').append(ich.stop(stop.toJSON()));
+                });
+            }
+            
+            $('#sortbutton').click(function() {
+                navigator.geolocation.getCurrentPosition(orderOnPosition);
+            });
         });
     </script>
 {% endblock %}
@@ -21,11 +115,10 @@
 {% block content %}
     <p>Kies je haltes. Volg de links om zeker te zijn dat het de juiste lijn betreft (gebruik de zoekfunctie van je browser).</p>
     
+    <input type="button" id="sortbutton" value="Sorteer op afstand">
+    
     <p>Volg daarna <a id="displaylink" href="/?halteids=">deze link</a> voor je dynamische haltestaat en sla die ergens op.</p>
 
-    <ol style="list-style-type: none;">
-        {% for halte in haltes %}
-            <li class="halte"><input type="checkbox" class="haltecheck" id="{{ halte.id }}" name="radio_{{ halte.id }}"><a href="http://cache.govi.openov.nl/kv55/{{ halte.id }}">{{ halte.name }}</a></li>
-        {% endfor %}
+    <ol id="haltes" style="list-style-type: none;">
     </ol>
 {% endblock %}

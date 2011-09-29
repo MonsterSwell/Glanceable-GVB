@@ -33,7 +33,7 @@
             
             for (var halteIdIndex in halteids) {
                 var halteid = halteids[halteIdIndex];
-                $.getJSON('/halte/' + halteid + '/', function (data) {
+                $.getJSON('/dris/' + halteid + '/', function (data) {
                     haltes.push((data));
                     haltes.sort(function(a, b) { 
                         if (a['minutes'][0] < b['minutes'][0]) return -1;

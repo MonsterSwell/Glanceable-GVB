@@ -3,7 +3,13 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('govi.views',
     (r'^$', 'index'),
     (r'^pick/$', 'pick'),
-    (r'^halte/(?P<halteid>\d+)/$', 'halte'),
+    
+    # Pass through method, parses XML and returns JSON
+    (r'^dris/(?P<halteid>\d+)/$', 'dris'),
+    
+    # API methods, currently not used
+    (r'^haltes/(?P<halteid>\d+)/$', 'halte'),
+    (r'^haltes/$', 'haltes'),
     
     # (r'^conversations/(?P<cid>\d+)/$', 'conversation'),
     #    (r'^conversations/(?P<cid>\d+)/say/$', 'conversation_say'),
