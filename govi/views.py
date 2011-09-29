@@ -20,6 +20,12 @@ HALTES = sorted(HALTES, key=lambda halte: halte['name'])
 def index(request):
     halteids = request.GET.get('halteids', '')
     
+    if not halteids:
+        halteids = request.session.get('halteids', '')
+        return HttpResponseRedirect('/?halteids=' + halteids)
+    else:
+        request.session['halteids'] = halteids
+    
     if halteids:
         return render_to_response('govi/index.html', {
             'halteids': halteids.split(',')
